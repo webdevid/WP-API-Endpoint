@@ -19,7 +19,7 @@ class WP_API_Endpoint {
 
 	private $_action;
 	private $_response = array();
-	private $_post = array();
+	private $_request = array();
 
 	private $_user;
 
@@ -85,7 +85,7 @@ class WP_API_Endpoint {
 		global $wp;
 		if(isset($wp->query_vars['__api'])){
 			$this->_action = $wp->query_vars['__api'];
-			$this->_post = json_decode(file_get_contents("php://input"),true); // Get raw data for JSON Request Body
+			$this->_request = json_decode(file_get_contents("php://input"),true); // Get raw data for JSON Request Body
 			$this->_handle_request();
 		}
 	}
@@ -117,8 +117,8 @@ class WP_API_Endpoint {
 	/** Get posted data
 	*	@return void
 	*/
-	public function _post($key){
-		return isset($this->_post[$key]) ? sanitize_text_field($this->_post[$key]) : false;
+	public function _request($key){
+		return isset($this->_request[$key]) ? sanitize_text_field($this->_request[$key]) : false;
 	}
 
 	/** Setup localization
@@ -145,7 +145,7 @@ class WP_API_Endpoint {
 
 	// Check Token
 	private function _check_token(){
-		$token = $this->_post('token');
+		$token = $this->_request('token');
 		if($token){
 			$args = array(
 				'meta_query' => array(
@@ -184,8 +184,8 @@ class WP_API_Endpoint {
 
 	//Process /api/login/ request
 	private function process_login(){
-		$username = $this->_post('username');
-		$password = $this->_post('password');
+		$username = $this->_request('username');
+		$password = $this->_request('password');
 		if($username && $password){
 			$data = array(
 				'user_login' => $username,
