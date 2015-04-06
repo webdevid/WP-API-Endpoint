@@ -145,9 +145,12 @@ class WP_API_Endpoint {
 
 	// Check Token
 	private function _check_token(){
+		$username = $this->_request('username');
 		$token = $this->_request('token');
-		if($token){
+		if($username && $token){
 			$args = array(
+				'search' => $username,
+				'search_columns' => array( 'user_login', 'user_email' ),
 				'meta_query' => array(
 					'relation' => 'AND',
 					array(
